@@ -5,7 +5,10 @@ import { content } from '../data/content';
 
 export default function Layout() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isDark, setIsDark] = useState(false);
+  
+  // CHANGED: Default state is now 'true' (Dark Mode ON by default)
+  const [isDark, setIsDark] = useState(true);
+  
   const location = useLocation();
 
   useEffect(() => {
