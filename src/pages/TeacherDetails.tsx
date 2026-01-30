@@ -3,26 +3,27 @@ import { useParams, Link } from 'react-router-dom';
 import { content } from '../data/content';
 import { ArrowLeft, GraduationCap, BookOpen, Star, Quote } from 'lucide-react';
 
-// FIX: Define the shape of a Teacher object so TypeScript knows 'message' is optional
+// 1. THIS INTERFACE FIXES THE ERROR
+// It tells TypeScript: "A teacher MIGHT have a message, but it's optional (?)"
 interface Teacher {
   id: string;
   name: string;
   subject: string;
   qualifications: string;
   image: string;
-  message?: string; // <--- This '?' makes it optional, fixing the error
+  message?: string; // <--- The '?' is the magic fix
 }
 
 export default function TeacherDetails() {
   const { id } = useParams();
 
-  // Search for teacher in all categories
-  // We explicitly cast them to 'Teacher' or 'null' to satisfy TypeScript
+  // 2. FIND THE TEACHER
   const principal = content.faculty.principal.id === id ? content.faculty.principal : null;
   const hscTeacher = content.faculty.hsc.find(t => t.id === id);
   const sscTeacher = content.faculty.ssc.find(t => t.id === id);
 
-  // FIX: Cast the result to the Teacher interface
+  // 3. FORCE THE TYPE (CRITICAL STEP)
+  // We use 'as Teacher' to tell TypeScript to trust us
   const teacher = (principal || hscTeacher || sscTeacher) as Teacher | undefined;
 
   if (!teacher) {
@@ -36,7 +37,6 @@ export default function TeacherDetails() {
     );
   }
 
-  // Helper to determine department text based on whether it's the principal or not
   const isPrincipal = teacher.id === 'principal';
   const departmentText = isPrincipal ? "Administration & English" : "Science & Commerce Wing";
 
@@ -111,7 +111,6 @@ export default function TeacherDetails() {
               {/* Only show quote if it exists (Principal) */}
               {teacher.message && (
                  <div className="mt-10 p-6 bg-brand-gold/5 border-l-4 border-brand-gold relative">
-                   <Quote className="absolute top-4 left-4 text-brand-gold/20 -z-10 transform -scale-x-100" size={40} />
                    <p className="text-slate-700 dark:text-slate-300 italic relative z-10">
                      "{teacher.message}"
                    </p>
